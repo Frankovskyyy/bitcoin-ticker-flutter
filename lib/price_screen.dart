@@ -1,4 +1,7 @@
+import 'package:bitcoin_ticker/coin_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -7,6 +10,38 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD';
+
+  get selectedIndex => null;
+
+  DropdownButton<String> androidDropdownButton() {
+    List<DropdownMenuItem<String>> myOptions = [];
+    for (String currency in currenciesList) {
+      print(currency);
+      myOptions.add(DropdownMenuItem(child: Text(currency), value: currency));
+    }
+    return DropdownButton<String>(
+        items: myOptions,
+        value: selectedCurrency, //BŁĄDDDDDDDDDDDDDDDDDDDDDDDDDDD
+        onChanged: (value) {
+          setState(() {
+            selectedCurrency = value;
+          });
+        });
+  }
+
+  CupertinoPicker iosPicker() {
+    List<Text> myOptions = [];
+    for (String currency in currenciesList) {
+      print(currency);
+      myOptions.add(Text(currency));
+    }
+    return CupertinoPicker(
+        itemExtent: 32.0,
+        onSelectedItemChanged: (selectedIndex) {
+          print(selectedIndex);
+        },
+        children: myOptions);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,18 +79,7 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: DropdownButton<String>(
-                items: [
-                  DropdownMenuItem(child: Text('USD'), value: 'USD'),
-                  DropdownMenuItem(child: Text('EUR'), value: 'EUR'),
-                  DropdownMenuItem(child: Text('GBP'), value: 'GBP'),
-                ],
-                value: selectedCurrency, //BŁĄDDDDDDDDDDDDDDDDDDDDDDDDDDD
-                onChanged: (value) {
-                  setState(() {
-                    selectedCurrency = value;
-                  });
-                }),
+            child: Platform.isIOS ? iosPicker() : androidDropdownButton(),
           ),
         ],
       ),
